@@ -20,6 +20,7 @@ This backend is UI-driven and whitelist-only. It never executes user-provided co
 - `GET /api/datasets/{dataset_id}/preview?limit=50`
 - `POST /api/datasets/{dataset_id}/transform`
 - `GET /api/datasets/{dataset_id}/download`
+- `POST /api/datasets/{dataset_id}/plots/render`
 
 Transform body format:
 

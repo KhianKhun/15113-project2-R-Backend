@@ -16,6 +16,8 @@
 - Added schema inference and NA summary generation.
 - Added input validation and readable error responses.
 - Added dataset CSV download endpoint (`GET /api/datasets/{dataset_id}/download`).
+- Added plotting module (`app/plotting/`) and plot render endpoint (`POST /api/datasets/{dataset_id}/plots/render`).
+- Implemented whitelist plotting for histogram/scatter/boxplot/line/bar with NA-dropping behavior.
 
 ## Human vs AI Contribution
 

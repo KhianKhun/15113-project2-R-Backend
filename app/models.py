@@ -64,3 +64,16 @@ class DatasetStateResponse(BaseModel):
 class ApiError(BaseModel):
     message: str
     details: list[dict[str, Any]] | None = None
+
+
+PlotType = Literal["histogram", "scatter", "boxplot", "line", "bar"]
+
+
+class PlotRequest(BaseModel):
+    plot_type: PlotType
+    columns: list[str] = Field(default_factory=list)
+    x: str | None = None
+    y: str | None = None
+    color_by: str | None = None
+    shape_by: str | None = None
+    params: dict[str, Any] = Field(default_factory=dict)

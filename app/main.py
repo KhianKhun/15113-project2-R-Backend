@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .routers.datasets import router as datasets_router
+from .routers.plots import router as plots_router
 from .routers.transform import router as transform_router
 
 
@@ -53,3 +54,4 @@ async def unexpected_error_handler(request: Request, exc: Exception) -> JSONResp
 
 app.include_router(datasets_router)
 app.include_router(transform_router)
+app.include_router(plots_router)
