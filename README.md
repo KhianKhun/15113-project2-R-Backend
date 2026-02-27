@@ -9,6 +9,8 @@ This backend is UI-driven and whitelist-only. It never executes user-provided co
 - Upload CSV and get `dataset_id`
 - Get preview, schema, and summary
 - Download current dataset CSV
+- Fit and store regression models
+- Render fitted regression curves
 - Apply whitelist transforms:
   - `drop_na_rows`
   - `filter_rows`
@@ -21,6 +23,9 @@ This backend is UI-driven and whitelist-only. It never executes user-provided co
 - `POST /api/datasets/{dataset_id}/transform`
 - `GET /api/datasets/{dataset_id}/download`
 - `POST /api/datasets/{dataset_id}/plots/render`
+- `POST /api/datasets/{dataset_id}/regressions/fit`
+- `GET /api/regressions/{model_id}/curve`
+- `POST /api/regressions/{model_id}/predict`
 
 Transform body format:
 
