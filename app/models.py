@@ -15,7 +15,10 @@ FilterOperator = Literal[
     "contains",
     "startswith",
     "endswith",
-    "is_in",
+    "exp",
+    "log",
+    "^",
+    "+",
 ]
 
 
@@ -26,8 +29,8 @@ class FilterClause(BaseModel):
 
 
 class FilterArgs(BaseModel):
-    logic: Literal["AND", "OR"] = "AND"
     clauses: list[FilterClause] = Field(min_length=1)
+    create_new_column: bool = False
 
 
 class DropNaArgs(BaseModel):

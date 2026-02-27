@@ -32,5 +32,14 @@ def transform_dataset(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    unchanged = (
+        transformed.shape == dataframe.shape
+        and transformed.columns.equals(dataframe.columns)
+        and transformed.dtypes.equals(dataframe.dtypes)
+        and transformed.equals(dataframe)
+    )
+    if unchanged:
+        return build_dataset_response(dataset_id, dataframe, limit=limit)
+
     new_dataset_id = put_dataset(transformed)
     return build_dataset_response(new_dataset_id, transformed, limit=limit)
