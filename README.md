@@ -1,23 +1,38 @@
 # Project 2 Data Studio Backend
 
-FastAPI + pandas backend for the Data Studio MVP.
+FastAPI + pandas backend for the Data Studio project.
 
 This backend is UI-driven and whitelist-only. It never executes user-provided code.
 
-## Features (MVP)
+## Deployed URL
 
-- Upload CSV and get `dataset_id`
-- Get preview, schema, and summary
-- Download current dataset CSV
-- Fit and store regression models
-- Render fitted regression curves
-- Apply whitelist transforms:
+- Backend (Render): `https://one5113-project2-r-backend.onrender.com`
+
+## Features
+
+- Upload CSV and return `dataset_id`
+- Preview/schema/summary responses for current dataset state
+- Download current dataset as CSV
+- Whitelist transforms:
   - `drop_na_rows`
-  - `filter_rows`
-- Immutable dataset versions: each transform returns a new `dataset_id`
+  - `filter_rows` with operators:
+    - factor/string: `==`, `!=`, `contains`, `startswith`, `endswith`
+    - numeric: `==`, `!=`, `<`, `<=`, `>`, `>=`, `exp`, `log`, `^`, `+`
+  - `create_new_column` support for math operators
+- Immutable-like versioning:
+  - changed result -> new `dataset_id`
+  - unchanged result -> returns same `dataset_id`
+- Plot rendering endpoints (histogram/scatter/boxplot/line/bar)
+- Regression module:
+  - linear / polynomial / kernel / knn / spline / additive / logistic
+  - model storage in memory
+  - fitted curve rendering
+  - prediction endpoint
+  - linear model p-value reporting
 
-## API
+## API Endpoints
 
+- `GET /api/health`
 - `POST /api/datasets/upload`
 - `GET /api/datasets/{dataset_id}/preview?limit=50`
 - `POST /api/datasets/{dataset_id}/transform`
@@ -27,17 +42,26 @@ This backend is UI-driven and whitelist-only. It never executes user-provided co
 - `GET /api/regressions/{model_id}/curve`
 - `POST /api/regressions/{model_id}/predict`
 
-Transform body format:
+## Transform Request Example
 
 ```json
 {
   "operations": [
-    { "op": "drop_na_rows", "args": { "subset": ["colA"] } },
+    {
+      "op": "drop_na_rows",
+      "args": { "subset": ["colA"] }
+    },
     {
       "op": "filter_rows",
       "args": {
-        "logic": "AND",
-        "clauses": [{ "col": "age", "op": ">=", "value": 18 }]
+        "clauses": [{ "col": "city", "op": "contains", "value": "burgh" }]
+      }
+    },
+    {
+      "op": "filter_rows",
+      "args": {
+        "clauses": [{ "col": "income", "op": "log", "value": null }],
+        "create_new_column": true
       }
     }
   ]
@@ -47,7 +71,7 @@ Transform body format:
 ## Local Run
 
 1. Create and activate virtual environment.
-2. Install deps:
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -59,33 +83,65 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-4. Run:
+4. Start backend:
 
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
 
-## Safety Limits
+## Environment Variables
 
-- No arbitrary user code execution (no R/Python eval/exec).
-- Upload file size limit via `MAX_FILE_BYTES`.
-- Dataset row/column limits via `MAX_DATASET_ROWS` and `MAX_DATASET_COLS`.
-- Input validation returns readable `400` errors for invalid user operations.
+- `ALLOWED_ORIGINS` (comma-separated CORS origins)
+- `MAX_FILE_BYTES` (upload limit)
+- `MAX_DATASET_ROWS`
+- `MAX_DATASET_COLS`
+
+Example:
+
+```env
+ALLOWED_ORIGINS=https://khiankhun.github.io,http://localhost:5173
+MAX_FILE_BYTES=5242880
+MAX_DATASET_ROWS=200000
+MAX_DATASET_COLS=200
+```
+
+## Safety and Limits
+
+- No arbitrary R/Python code execution.
+- Strict whitelist transform and plotting/regression handlers.
+- Upload size and dataframe shape limits enforced.
+- Invalid operations return readable `400` responses.
+
+## Troubleshooting
+
+- GitHub Pages frontend shows `Failed to fetch`:
+  - verify backend is up: `/api/health`
+  - verify Render `ALLOWED_ORIGINS` includes `https://khiankhun.github.io`
+  - redeploy backend after env updates
+- Transform seems to do nothing:
+  - unchanged outputs intentionally return the same `dataset_id`
+- Data/model loss after restart:
+  - dataset and regression model storage are in-memory (non-persistent)
 
 ## Folder Structure
 
 ```text
 .
-├─ app/
-│  ├─ main.py
-│  ├─ models.py
-│  ├─ storage.py
-│  ├─ transforms.py
-│  ├─ summary.py
-│  └─ routers/
-│     ├─ datasets.py
-│     └─ transform.py
-├─ requirements.txt
-├─ .env.example
-└─ prompt_log.md
+|-- app/
+|   |-- main.py
+|   |-- models.py
+|   |-- storage.py
+|   |-- transforms.py
+|   |-- summary.py
+|   |-- routers/
+|   |   |-- datasets.py
+|   |   |-- transform.py
+|   |   |-- plots.py
+|   |   `-- regressions.py
+|   |-- plotting/
+|   `-- regression/
+|-- requirements.txt
+|-- .env.example
+|-- prompt_log.md
+`-- README.md
 ```
