@@ -21,16 +21,12 @@ def fit_polynomial(
     degree = min(max(degree, 1), 10)
 
     model = Pipeline(
-        [
-            ("poly", PolynomialFeatures(degree=degree, include_bias=False)),
-            ("linear", LinearRegression()),
-        ]
+        [ ("poly", PolynomialFeatures(degree=degree, include_bias=False)),
+          ("linear", LinearRegression())]
     )
     model.fit(x, y)
     pred = model.predict(x)
 
-    metrics = {
-        "r2": float(r2_score(y, pred)),
-        "mse": float(mean_squared_error(y, pred)),
-    }
+    metrics = { "r2": float(r2_score(y, pred)),
+                "mse": float(mean_squared_error(y, pred))}
     return model, metrics, y.astype(float)

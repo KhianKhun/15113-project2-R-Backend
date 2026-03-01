@@ -16,15 +16,12 @@ def fit_linear(
     x = frame[feature_cols].to_numpy()
     y = frame[y_col].to_numpy()
 
-    fit_intercept = bool(params.get("fit_intercept", True))
-    model = LinearRegression(fit_intercept=fit_intercept)
+    model = LinearRegression(fit_intercept=True)
     model.fit(x, y)
 
     pred = model.predict(x)
-    metrics = {
-        "r2": float(r2_score(y, pred)),
-        "mse": float(mean_squared_error(y, pred)),
-    }
+    metrics = { "r2": float(r2_score(y, pred)),
+                "mse": float(mean_squared_error(y, pred)) }
 
     x_df = frame[feature_cols]
     ols_x = sm.add_constant(x_df, has_constant="add")

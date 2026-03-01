@@ -25,18 +25,10 @@ def fit_additive_model(
     ridge_alpha = max(ridge_alpha, 1e-8)
 
     model = Pipeline(
-        [
-            (
-                "splines",
-                SplineTransformer(
-                    n_knots=n_knots,
-                    degree=spline_degree,
-                    include_bias=False,
-                ),
-            ),
-            ("ridge", Ridge(alpha=ridge_alpha)),
-        ]
-    )
+        [ ("splines", SplineTransformer(n_knots=n_knots,
+                                        degree=spline_degree,
+                                        include_bias=False) ),
+          ("ridge", Ridge(alpha=ridge_alpha))])
     model.fit(x, y)
     pred = model.predict(x)
 

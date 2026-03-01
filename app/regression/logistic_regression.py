@@ -36,8 +36,6 @@ def fit_logistic_regression(
 
     pred_class = model.predict(x)
     pred_prob = model.predict_proba(x)
-    metrics = {
-        "accuracy": float(accuracy_score(y, pred_class)),
-        "log_loss": float(log_loss(y, pred_prob)),
-    }
+    metrics = { "accuracy": float(accuracy_score(y, pred_class)),
+                "log_loss": float(log_loss(y, pred_prob)) }
     return model, metrics, y.astype(float), classes
